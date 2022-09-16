@@ -24,5 +24,8 @@ const server = app.listen(port, (err) => {
   console.log("Server listening the port " + port)
 })
 
+process.on('SIGINT', function() {
+  server.close();
+});
 
 module.exports = server
