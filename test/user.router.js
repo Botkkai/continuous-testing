@@ -38,7 +38,7 @@ describe('User REST API', () => {
            throw err
         })
     })
-    
+
     it('pass wrong parameters', (done) => {
       const user = {
         firstname: 'Sergei',
@@ -57,9 +57,84 @@ describe('User REST API', () => {
            throw err
         })
     })
-  })
 
-  // describe('GET /user', ()=> {
-  //   // TODO Create test for the get method
-  // })
+    it('avoid creating an existing user', (done) => {
+      const user = {
+        username: 'sergkudinov',
+        firstname: 'Sergei',
+        lastname: 'Kudinov'
+      }
+      chai.request(app)
+      .post('/user')
+      .send(user)
+      .then((res) => {
+        chai.expect(res).to.have.status(201)
+        chai.expect(res.body.status).to.equal('success')
+        chai.expect(res).to.be.json
+        chai.request(app)
+        .post('/user')
+        .send(user)
+        .then((res) => {
+          chai.expect(res).to.have.status(400)
+          chai.expect(res.body.status).to.equal('error')
+          chai.expect(res).to.be.json
+          done()
+      })
+      .catch((err) => {
+         throw err
+      })
+    })
+  })
+})
+
+  describe('GET /user', ()=> {
+    it('get a user by username', (done) => {
+      const user = {
+        username: 'sergkudinov',
+        firstname: 'Sergei',
+        lastname: 'Kudinov'
+      }
+      chai.request(app)
+      .post('/user')
+      .send(user)
+      .then((res) => {
+        chai.expect(res).to.have.status(201)
+        chai.expect(res.body.status).to.equal('success')
+        chai.expect(res).to.be.json
+      
+        chai.request(app)
+        .get('/user/'+user.username)
+        .then((res) => {
+          chai.expect(res).to.have.status(201)
+          chai.expect(res.body.status).to.equal('success')
+          chai.expect(res).to.be.json
+          done()
+        })
+        .catch((err) => {
+        throw err
+        })
+      })
+    })
+
+    it('cannot get a user when it does not exist', (done) => {
+      // Chech with any invalid user
+      const user = {
+       username: 'unknown',
+       firstname: 'invalid',
+       lastname: 'User'
+     }
+
+     chai.request(app)
+     .get('/user/'+user.username)
+     .then((res) => {
+      chai.expect(res).to.have.status(400)
+      chai.expect(res.body.status).to.equal('error')
+      chai.expect(res).to.be.json
+      done()
+      })
+      .catch((err) => {
+          throw err
+      })
+    })
+  })
 })
