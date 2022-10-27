@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "src"
+        working-directory: "conf/default.json"
 
     strategy:
       matrix:
