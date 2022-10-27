@@ -2,12 +2,12 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "quentin" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "quentin" ]
 
 jobs:
-  test:
+  start:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -32,26 +32,11 @@ jobs:
         cache-dependency-path: '**/package-lock.json'
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm test
-   # Label of the container job
-  runner-job:
-    # You must use a Linux environment when using service containers or container jobs
-    runs-on: ubuntu-latest
-
-    # Service containers to run with `runner-job`
-    services:
-      # Label used to access the service container
-      redis:
-        # Docker Hub image
-        image: redis
-        #
-        ports:
-          # Opens tcp port 6379 on the host and service container
-          - 6379:6379
+    - run: npm start
   
   deploy:
     
-    needs: test
+    needs: start
     runs-on: ubuntu-latest
 
     steps:
@@ -61,4 +46,4 @@ jobs:
           heroku_api_key: ${{61faa899-1f53-4371-8fea-c30685b1d454}}
           heroku_app_name: "ece-devops-lab-4"
           heroku_email: "quentin.sereno@edu.ece.fr"
-          appdir: "src"
+          appdir: "/src"
